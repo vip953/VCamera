@@ -11,6 +11,7 @@ import virtual.camera.app.app.App
 import virtual.camera.app.app.AppManager
 import virtual.camera.app.bean.AppInfo
 import virtual.camera.app.bean.InstalledAppBean
+import virtual.camera.app.bean.LaunchResult
 import virtual.camera.app.util.AbiUtils
 import virtual.camera.app.util.getString
 import java.io.File
@@ -173,11 +174,27 @@ class AppsRepository {
     }
 
 
-    fun launchApk(packageName: String, userId: Int, launchLiveData: MutableLiveData<Boolean>) {
-        val intent: Intent = HackApi.getLaunchIntentForPackage(packageName,userId)
+    fun launchApk(packageName: String, userId: Int, launchLiveData: MutableLiveData<LaunchResult>) {
+        val intent: Intent? = HackApi.getLaunchIntentForPackage(packageName, userId)
+
+        if (intent == null) {
+            val message = getString(R.string.start_fail_no_launch_intent, packageName)
+            Log.e(TAG, message)
+            launchLiveData.postValue(LaunchResult(false, message))
+            return
+        }
+
         intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
-        var result = HackApi.startActivity(intent, 0) == 0
-        launchLiveData.postValue(result)
+        val startResult = HackApi.startActivity(intent, 0)
+        val result = startResult == 0
+        if (!result) {
+            val message = getString(R.string.start_fail_with_code, packageName, startResult)
+            Log.e(TAG, message)
+            launchLiveData.postValue(LaunchResult(false, message, startResult))
+            return
+        }
+
+        launchLiveData.postValue(LaunchResult(true))
     }
 
 

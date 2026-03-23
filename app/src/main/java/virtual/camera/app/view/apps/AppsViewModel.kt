@@ -2,6 +2,7 @@ package virtual.camera.app.view.apps
 
 import androidx.lifecycle.MutableLiveData
 import virtual.camera.app.bean.AppInfo
+import virtual.camera.app.bean.LaunchResult
 import virtual.camera.app.data.AppsRepository
 import virtual.camera.app.view.base.BaseViewModel
 
@@ -17,7 +18,7 @@ class AppsViewModel(private val repo: AppsRepository) : BaseViewModel() {
 
     val resultLiveData = MutableLiveData<String>()
 
-    val launchLiveData = MutableLiveData<Boolean>()
+    val launchLiveData = MutableLiveData<LaunchResult>()
 
     //利用LiveData只更新最后一次的特性，用来保存app顺序
     val updateSortLiveData = MutableLiveData<Boolean>()
