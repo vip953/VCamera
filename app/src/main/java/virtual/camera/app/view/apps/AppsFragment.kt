@@ -223,8 +223,8 @@ class AppsFragment : Fragment() {
         viewModel.launchLiveData.observe(viewLifecycleOwner) {
             it?.run {
                 hideLoading()
-                if (!it) {
-                    toast(R.string.start_fail)
+                if (!it.success) {
+                    toast(it.message ?: getString(R.string.start_fail))
                 }
             }
         }
